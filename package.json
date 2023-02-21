@@ -1,0 +1,21 @@
+{
+  "name": "cream",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {},
+  "keywords": [],
+  "author": "Cilantro Pepper",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
+    "@types/koa": "^2.13.5",
+    "@types/node": "^18.13.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "koa": "^2.14.1",
+    "reflect-metadata": "^0.1.13"
+  }
+}
