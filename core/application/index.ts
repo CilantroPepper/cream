@@ -30,7 +30,7 @@ export default class Application extends koa {
             else
                 Response.success(ctx, {
                     code: data?.code ?? 200,
-                    data: data?.data ?? data ?? null,
+                    data: data?.data !== void 0 ? data?.data : data ?? null,
                     msg: data?.msg ?? 'success'
                 }, data?.headers)
         })
