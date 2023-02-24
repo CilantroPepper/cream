@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 export { default as BodyParser } from './core/application/body-parser'
 export { default as CommonResponse } from './core/application/response'
 export { default as Application } from './core/application'

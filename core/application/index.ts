@@ -1,6 +1,7 @@
 import koa, { Context } from 'koa'
 import BodyParser from './body-parser'
 import Response from './response'
+import session from 'koa-session'
 
 export default class Application extends koa {
     constructor(private module: (ctx: Context) => Promise<any>) {
@@ -9,6 +10,14 @@ export default class Application extends koa {
     }
 
     private init() {
+        this.use(session({
+            key: 'cream:session',
+            overwrite: true,
+            httpOnly: true,
+            rolling: true,
+            renew: false,
+            signed: true
+        }, this))
         this.use(async (ctx, next) => {
             await next()
             ctx.set({

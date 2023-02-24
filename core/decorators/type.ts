@@ -4,7 +4,8 @@ const MetaType = {
     PROVIDER: '__PROVIDER__',
     METHOD: '__METHOD__',
     SERVICE: '__SERVICE__',
-    PARAMS: '__PARAMS__'
+    PARAMS: '__PARAMS__',
+    SESSION: '__SESSION__'
 }
 
 interface ModuleDecorator {

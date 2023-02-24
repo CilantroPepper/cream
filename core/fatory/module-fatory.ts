@@ -1,11 +1,12 @@
-import { Context } from "koa";
-import Application from "../application";
-import { MetaType, ParamType } from "../decorators/type";
+import { Context } from "koa"
+import Application from "../application"
+import Response from "../application/response"
+import { MetaType, ParamType } from "../decorators/type"
 
 export function ModuleFactory<T extends object>(app: T, plugins?: ((ctx: Context) => Promise<any>)[]) {
     const validMethod = ['GET', 'POST']
     const dispatcher = async (ctx: Context) => {
-        if (ctx.method.toUpperCase() === 'OPTIONS') return '';
+        if (ctx.method.toUpperCase() === 'OPTIONS') return ''
         if (!validMethod.includes(ctx.method.toUpperCase())) throw { code: 404, msg: 'Unsupport Request' }
         let path = ctx.path.split('/').slice(1)
         // Get controller
@@ -15,7 +16,7 @@ export function ModuleFactory<T extends object>(app: T, plugins?: ((ctx: Context
             let controlPath = path.slice(0, count--).join('/')
             controller = Reflect.getMetadata(MetaType.PATH + ':' + controlPath, app)
         }
-        if (controller === void 0) throw { code: 404, msg: 'Not Found'}
+        if (controller === void 0) throw { code: 404, msg: 'Not Found' }
         // Get service path
         const servicePath = path.slice(count + 1).reduce((pre, cur) => pre + '/' + cur, '').slice(1)
         // Get request method
@@ -33,8 +34,19 @@ export function ModuleFactory<T extends object>(app: T, plugins?: ((ctx: Context
             if (paramType.type === 'querydata') return ctx?.query
         }) ?? []
         try {
-            plugins?.map(async plugin => await plugin?.(ctx))
-            return await executor.bind(controller)(...params)
+            const sessions: { key: string, name: string }[] = Reflect.getMetadata(MetaType.SESSION, Object.getPrototypeOf(controller)) ?? []
+            try {
+                if (plugins)
+                    for (let plugin of plugins)
+                        await plugin?.(ctx)
+            } catch (error: any) {
+                return Response.fail(ctx, error?.code ?? 404, error?.msg ?? 'Not Found')
+            }
+            const props: any = {}
+            sessions.forEach(item => props[item.key] = (v: any) => {
+                if (ctx.session) ctx.session[item.name] = v
+            })
+            return await executor.call(Object.assign({}, controller, props), ...params)
         } catch (error) {
             throw error
         }
